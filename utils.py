@@ -1,5 +1,6 @@
 import subprocess
 import time
+import os
 
 import config
 
@@ -33,9 +34,15 @@ def action2(message: str, command: str, sudo: bool = True):
     output2(message)
     run(command, sudo)
 
-
 def seperate():
     print("\n" + "-"*20 + "\n")
+
+
+def write_ssh_key():
+    path = os.path.expanduser("~/.ssh/authorized_keys")
+    with open(path, 'a') as f:
+        f.write(config.ssh_public_key + '\n')
+
 
 if __name__ == "__main__":
     print("Bu dosya doğrudan çalıştırılamaz. Lütfen main.py dosyasını çalıştırın.")

@@ -5,11 +5,12 @@ Ana kurulum scripti
 -- Co-authored-by: Ali Efe Aktuğ <efealiaktug@gmail.com>
 """
 import os
+import sys
 
 import config
 import otokapat
 import update
-from utils import output, action, seperate
+from utils import output, action, seperate, write_ssh_key
 
 
 def main():
@@ -23,9 +24,10 @@ def main():
             output("Güncelleme varmış. Güncellemeyi yapalım...")
             update.main()
             os.environ['WAS_UPDATED'] = '1'
+            os.execlp(sys.executable, sys.executable, *sys.argv)
         else:
             output("Güncelleme yok. başlıyorum...")
-        seperate()
+    seperate()
 
     action("apt güncellemeleri çekiliyor...", "apt update -y")
     action("apt güncellemeleri kuruluyor...", "apt upgrade -y")
@@ -43,22 +45,23 @@ def main():
         action("cockpit servisi başlatılıyor...", "systemctl enable --now cockpit.socket")
         seperate()
 
-    action("ssh servisi aktifleştiriliyor...", f"systemctl enable --now {config.ssh_service}")
-    action("ssh servisi başlatılıyor...", f"systemctl start {config.ssh_service}")
-    action("ssh için passwordauth kapatılıyor...", f"""sed -i.bak -E 's/^[[:space:]]*#?[[:space:]]*PasswordAuthentication.*/PasswordAuthentication no/g' {config.ssh_config_path}""")
-    action("ssh için pubkeyauth açılıyor...", f"""sed -i.bak -E 's/^[[:space:]]*#?[[:space:]]*PubkeyAuthentication.*/PubkeyAuthentication yes/g' {config.ssh_config_path}""")
-    action("ssh için gereken dosyalar oluşturuluyor...", "mkdir -p ~/.ssh && chmod 700 ~/.ssh && touch ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys")
-    action("ssh için public key taşınıyor...", f"echo '{config.ssh_public_key}' >> ~/.ssh/authorized_keys")
+    action("ssh servisi başlatılıyor...", f"systemctl enable --now {config.ssh_service}")
+    action("ssh için passwordauth kapatılıyor...", rf"""sed -i.bak -E 's/^[[:space:]]*#?\s*PasswordAuthentication\s*.*$/PasswordAuthentication no/g' {config.ssh_config_path}""")
+    action("ssh için pubkeyauth açılıyor...", rf"""sed -i.bak -E 's/^[[:space:]]*#?\s*PubkeyAuthentication\s*.*$/PubkeyAuthentication yes/g' {config.ssh_config_path}""")
+    action("ssh için gereken dosyalar oluşturuluyor...", "mkdir -p ~/.ssh && chmod 700 ~/.ssh && touch ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys", False)
+    output("ssh için public key taşınıyor...")
+    write_ssh_key()
     action("ssh servisi yeniden başlatılıyor...", f"systemctl restart {config.ssh_service}")
     seperate()
 
-    action("grub-timeout 0 yapılıyor...", f"""sed -i.bak -E 's/^[[:space:]]*#?[[:space:]]*GRUB_TIMEOUT=.*/GRUB_TIMEOUT=0/g' {config.grub_config_path}""")
-    action("grub teması gizleniyor...", f"echo 'GRUB_TIMEOUT_STYLE=hidden' | sudo tee -a {config.grub_config_path} > /dev/null")
+    action("grub-timeout 0 yapılıyor...", rf"""sed -i.bak -E 's/^[[:space:]]*#?\s*GRUB_TIMEOUT=.*$/GRUB_TIMEOUT=0/g' {config.grub_config_path}""")
+    action("grub teması gizleniyor...", f"""grep -qxF 'GRUB_TIMEOUT_STYLE=hidden' {config.grub_config_path} || echo 'GRUB_TIMEOUT_STYLE=hidden' | sudo tee -a {config.grub_config_path} > /dev/null""")
     action("grub güncelleniyor...", "update-grub")
     seperate()
 
     output("Ali'nin otomatik kapatma servisinin kurulumu başlatılıyor...")
     otokapat.setup()
+
 
 if "__main__" == __name__:
     main()
