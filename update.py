@@ -1,3 +1,4 @@
+import getpass
 import os
 import subprocess
 import sys
@@ -79,12 +80,26 @@ def pull_variables():
 
 
 def fetch_file_list(github_repo: str, github_branch: str):
+    """dosya listesini çeker."""
     download_file("file_list.txt", github_repo, github_branch)
     with open("file_list.txt.tmp_new", "r") as f:
         file_list = f.read().splitlines()
     print("\n[+] | Güncellenecek dosyalar:")
     print(f"    | {file_list}\n")
     return file_list
+
+
+def fix_perms(file_name: str):
+    """belirtilen dosyanın izinlerini düzeltir."""
+    username = getpass.getuser()
+    print(f"[+] | {file_name} dosyasının sahibi {username} yapılıyor...")
+    if not dry:
+        run(f"chown -R {username}:{username} {file_name}", sudo=True)
+
+    print(f"[+] | {file_name} dosyasının yetkileri 755 yapılıyor...")
+    if not dry:
+        run(f"chmod -R 755 {file_name}", sudo=True)
+
 
 def main():
     github_repo, github_branch = pull_variables()
@@ -103,12 +118,21 @@ def main():
         else:
             print("[!] | güncelleme tamamlanamadı. kapatıyorum görüşürüz.")
             sys.exit(1)
+    print()
 
     # temizle
     for file_name in file_list:
         temp_file_name = file_name + ".tmp_new"
         if os.path.exists(temp_file_name):
             os.remove(temp_file_name)
+        if os.path.exists("file_list.txt.tmp_new"):
+            os.remove("file_list.txt.tmp_new")
+    print()
+
+    # yetkileri düzelt
+    for file_name in file_list:
+        fix_perms(file_name)
+
 
 if "__main__" == __name__:
     print("Hoşgeldiniz. Güncelleme aracını başlatıyorum...")

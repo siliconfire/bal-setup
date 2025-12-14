@@ -13,6 +13,7 @@ from utils import run, output, action, seperate
 import otokapat
 import config
 
+# update denemek için buraya bir yorum koyuyorum
 
 def main():
     print(f"Kurulum scriptine hoş geldiniz! (versiyon {config.ver})")
