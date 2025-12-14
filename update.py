@@ -83,8 +83,11 @@ def replace_file(old, new):
 def fetch_file_list(github_repo: str, github_branch: str):
     """dosya listesini çeker."""
     download_file("file_list.txt", github_repo, github_branch)
-    with open("file_list.txt.tmp_new", "r") as f:
-        file_list = f.read().splitlines()
+    if dry:
+        file_list = ["file1.txt", "file2.txt", "example.py"]
+    else:
+        with open("file_list.txt.tmp_new", "r") as f:
+            file_list = f.read().splitlines()
     print("\n[+] | Güncellenecek dosyalar:")
     print(f"    | {file_list}\n")
     return file_list
@@ -168,6 +171,8 @@ def check_updates():
         print("[+] | Config dosyanız var.")
 
     download_file("version", github_repo, github_branch)
+    if dry:
+        return True
     with open("version.tmp_new", "r") as f:
         latest_ver = f.read()
     if latest_ver > ver:
@@ -175,7 +180,6 @@ def check_updates():
         print("    | GÜncelleme başlatıyorum.")
         return True
     return False
-
 
 if "__main__" == __name__:
     print("Güncelleme kontrolcüsüne hoşgeldiniz.")
@@ -208,8 +212,8 @@ if "__main__" == __name__:
                 print("\n[+] | Zaten en son sürümü kullanıyorsunuz.")
             break
         elif choice == "8":
-            download_config_too = not download_config_too
-        elif choice == "9":
             dry = not dry
+        elif choice == "9":
+            download_config_too = not download_config_too
         else:
-            print("Yanlış seçim yaptınız. Lütfen istediğiniz rakamı girip ENTER tuşuna basın.")
+            print("\n" + "-"*20 + "\nYanlış seçim yaptınız. Lütfen istediğiniz rakamı girip ENTER tuşuna basın.")

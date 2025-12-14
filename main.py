@@ -4,18 +4,28 @@ Ana kurulum scripti
 -- Çınar Mert Çeçen <cinar@cinarcecen.dev>
 -- Co-authored-by: Ali Efe Aktuğ <efealiaktug@gmail.com>
 """
-
-import subprocess
-import time
 import os
 
-from utils import run, output, action, seperate
-import otokapat
 import config
+import otokapat
+import update
+from utils import output, action, seperate
 
 
 def main():
-    print(f"Kurulum scriptine hoş geldiniz! (versiyon {config.ver})")
+    if os.environ.get('WAS_UPDATED') == '1':
+        print("\n\n\nGüncelleme başarılı. başlıyorum...")
+        del os.environ['WAS_UPDATED']
+    else:
+        print(f"Kurulum scriptine hoş geldiniz!")
+
+        if update.check_updates():
+            output("Güncelleme varmış. Güncellemeyi yapalım...")
+            update.main()
+            os.environ['WAS_UPDATED'] = '1'
+        else:
+            output("Güncelleme yok. başlıyorum...")
+        seperate()
 
     action("apt güncellemeleri çekiliyor...", "apt update -y")
     action("apt güncellemeleri kuruluyor...", "apt upgrade -y")
