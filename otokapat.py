@@ -9,7 +9,6 @@ from pathlib import Path
 from utils import output2 as output, action2 as action, run
 
 def setup():
-    # Welcome text (kept exactly as original)
     output("Akıllı Kapat kurulumuna hoş geldiniz.")
     output("")
 
@@ -17,37 +16,31 @@ def setup():
     output("script yazılıyor...")
 
     akilli_script = r"""#!/bin/bash
-while true; do
-    # 2 dakikada bir kontrol edip, kimse giriş yapılı değilse tahtayı kapatan script
-    # systemd servisinin adı "akilli_kapat.service" olmalı
-    # -- Ali Efe Aktuğ <efealiaktug@gmail.com>
-    # -- Co-authored-by: Çınar Mert Çeçen <cinar@cinarcecen.dev>
+# Tek seferlik kontrol: kimse giriş yapılı değilse cihazı kapatır.
+# Zamanlama systemd timer tarafından yönetilir.
 
-    # 120 saniye bekle
-    sleep 120
-
-    # users komutu boşsa (0), cihazı kapat
-    if [ $(users | wc -w) -eq 0 ]; then
-        /usr/sbin/shutdown -h now
-    fi
-done
+# users komutu boşsa (0), cihazı kapat
+if [ $(users | wc -w) -eq 0 ]; then
+    # Kapatma komutunu çalıştırmadan önce loglama yapılabilir.
+    /usr/sbin/shutdown -h now
+    exit 0
+fi
+exit 0
 """
 
-    # Write the script to a temporary file first
+    # önce geçici dosyaya yaz
     tmp_dir = tempfile.gettempdir()
     tmp_script_path = Path(tmp_dir) / "akilli_kapat.sh.tmp"
     with open(tmp_script_path, "w", encoding="utf-8") as f:
         f.write(akilli_script)
 
-    # Use utils.action to copy the file into place with proper permissions (avoids shell redirection/pipes)
-    # install will copy the file and set the mode
+    # DÜZGÜN YETKİLERLE kopyalayalım (inşallah)
     action("script yükleniyor...", f"install -m 755 {tmp_script_path} /usr/local/bin/akilli_kapat.sh")
 
-    # 2. Çalıştırma izni ver
-    # chmod is redundant because install set the mode, but we keep it for parity with original script
+    # çalıştırma izni ver
     action("chmod +x...", "chmod +x /usr/local/bin/akilli_kapat.sh")
 
-    # 3. Systemd servisi oluştur
+    # systemd servisini oluştur
     output("systemd servisi oluşturuluyor...")
 
     service_unit = r"""[Unit]
@@ -55,33 +48,55 @@ Description=Akıllı Tahta Otomatik Kapatma Servisi
 After=network.target
 
 [Service]
+Type=simple
 ExecStart=/usr/local/bin/akilli_kapat.sh
-Restart=always
 User=root
 
 [Install]
 WantedBy=multi-user.target
 """
-
     tmp_service_path = Path(tmp_dir) / "akilli_kapat.service.tmp"
     with open(tmp_service_path, "w", encoding="utf-8") as f:
         f.write(service_unit)
 
     action("servis dosyası kopyalanıyor (/etc/systemd/system/akilli_kapat.service)...", f"install -m 644 {tmp_service_path} /etc/systemd/system/akilli_kapat.service")
 
-    # 4. Servisi aktif et ve başlat
-    output("systemd servisi başlatılıyor...")
-    action("systemctl reload...", "systemctl daemon-reload")
-    action("servis aktifleştiriliyor...", "systemctl enable akilli_kapat.service")
-    action("servis başlatılıyor...", "systemctl start akilli_kapat.service")
+    # 4. sytemd zamanlayıcısını oluştur
+    output("systemd zamanlayıcı (timer) oluşturuluyor...")
 
-    # Kurulum bitti uyarısı (Sadece bir kez kurulum anında görünür)
+    timer_unit = r"""[Unit]
+Description=Akıllı Tahta Otomatik Kapatma Zamanlayıcısı
+
+[Timer]
+# 2 dakikada bir çalıştır
+OnUnitActiveSec=2min
+Unit=akilli_kapat.service
+
+[Install]
+WantedBy=timers.target
+"""
+    tmp_timer_path = Path(tmp_dir) / "akilli_kapat.timer.tmp"
+    with open(tmp_timer_path, "w", encoding="utf-8") as f:
+        f.write(timer_unit)
+
+    action("timer dosyası kopyalanıyor (/etc/systemd/system/akilli_kapat.timer)...", f"install -m 644 {tmp_timer_path} /etc/systemd/system/akilli_kapat.timer")
+
+    # 5. daemon reload
+    output("systemd zamanlayıcı başlatılıyor...")
+    action("systemctl reload...", "systemctl daemon-reload")
+
+    # zamanlayıcıyı başlat (servisi değil!!!!!!!!!!!!)
+    action("zamanlayıcı aktifleştiriliyor...", "systemctl enable akilli_kapat.timer")
+    action("zamanlayıcı başlatılıyor...", "systemctl start akilli_kapat.timer")
+
+    # end
     output("")
     output("Kurulum tamamlandı.")
     output("görüşürüz.")
     output("")
 
-    # notify-send ui gerektrirebilir, sudo ile çalıştıralım
+    # notify-send ui gerektrirebilir, ne olur bilmiyorum
+    # sudosuz calistiralim ki, bende bilmiyorum aslında nedenini, gerek yok ama.
     run("notify-send \"Kurulum Tamamlandı\" \"Otomatik kapatma servisi başarıyla kuruldu ve başlatıldı.\"", sudo=False)
 
     # Cleanup temporary files
@@ -92,6 +107,10 @@ WantedBy=multi-user.target
         pass
     try:
         tmp_service_path.unlink()
+    except Exception:
+        pass
+    try:
+        tmp_timer_path.unlink()
     except Exception:
         pass
 
