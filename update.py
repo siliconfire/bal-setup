@@ -3,7 +3,7 @@ import os
 import subprocess
 import sys
 
-dry = True
+dry = False
 
 
 def run(command: str, sudo: bool = True):
