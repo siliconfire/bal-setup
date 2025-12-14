@@ -14,7 +14,7 @@ from utils import output, action, seperate
 
 def main():
     if os.environ.get('WAS_UPDATED') == '1':
-        print("\n\n\nGüncelleme başarılı. başlıyorum...")
+        print("\n\n\nGüncelleme başarılı. başlıyorum123123...")
         del os.environ['WAS_UPDATED']
     else:
         print(f"Kurulum scriptine hoş geldiniz!")
