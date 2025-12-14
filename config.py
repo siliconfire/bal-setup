@@ -1,6 +1,5 @@
 # True açık demektir, False kapalı demektir.
 # Varsayılan ayarlar parantez içinde yazılmıştır.
-ver = 1   # Bunu ellemeyin
 
 # -------------------------
 

@@ -3,7 +3,25 @@ import os
 import subprocess
 import sys
 
-dry = False
+dry = False  # fake atması (dry run) için True yapın.
+
+
+def pull_variables():
+    """Neden böyle saçma bir fonksiyon yazdığımı düşünüyor olabilirsiniz, açıklayayım.
+    Eğer config varsa değerleri ordan çekmek istiyorum (ki kullanıcı değiştirebilsin), ama eğer config yoksa kullanıcıları "değersiz" bırakmak istemiyorum.
+    Kullanıcının bu repoyu tamamen bu update.py dosyası ile çekeceğini değerlendirince çok da saçma gelmiyor."""
+    try:
+        from config import github_repo, github_branch
+        print(f"\n[+] | Config dosyanızdan adresi çektim...")
+        print(f"    | {github_repo} ({github_branch})")
+    except ImportError:
+        github_repo = "siliconfire/bal-setup"
+        github_branch = "master"
+        print(
+            "\n[!] | Config dosyanız yok herhalde, bu ilk kurulum ise bu tamamen normal. Varsayılan değerleri kullanıyorum...")
+        print(f"    | {github_repo} ({github_branch})")
+        download_config_too = True
+    return github_repo, github_branch
 
 
 def run(command: str, sudo: bool = True):
@@ -62,23 +80,6 @@ def replace_file(old, new):
     os.replace(old, new)
 
 
-def pull_variables():
-    """Neden böyle saçma bir fonksiyon yazdığımı düşünüyor olabilirsiniz, açıklayayım.
-    Eğer config varsa değerleri ordan çekmek istiyorum (ki kullanıcı değiştirebilsin), ama eğer config yoksa kullanıcıları "değersiz" bırakmak istemiyorum.
-    Kullanıcının bu repoyu tamamen bu update.py dosyası ile çekeceğini değerlendirince çok da saçma gelmiyor."""
-    try:
-        from config import github_repo, github_branch
-        print(f"\n[+] | Config dosyanızdan adresi çektim...")
-        print(f"    | {github_repo} ({github_branch})")
-    except ImportError:
-        github_repo = "siliconfire/bal-setup"
-        github_branch = "master"
-        print(
-            "\n[!] | Config dosyanız yok herhalde, bu ilk kurulum ise bu tamamen normal. Varsayılan değerleri kullanıyorum...")
-        print(f"    | {github_repo} ({github_branch})")
-    return github_repo, github_branch
-
-
 def fetch_file_list(github_repo: str, github_branch: str):
     """dosya listesini çeker."""
     download_file("file_list.txt", github_repo, github_branch)
@@ -88,6 +89,14 @@ def fetch_file_list(github_repo: str, github_branch: str):
     print(f"    | {file_list}\n")
     return file_list
 
+def cleanup(file_name):
+    if dry:
+        pass
+    temp_file_name = file_name + ".tmp_new"
+    if os.path.exists(temp_file_name):
+        os.remove(temp_file_name)
+    if os.path.exists("file_list.txt.tmp_new"):
+        os.remove("file_list.txt.tmp_new")
 
 def fix_perms(file_name: str):
     """belirtilen dosyanın izinlerini düzeltir."""
@@ -122,18 +131,85 @@ def main():
 
     # temizle
     for file_name in file_list:
-        temp_file_name = file_name + ".tmp_new"
-        if os.path.exists(temp_file_name):
-            os.remove(temp_file_name)
-        if os.path.exists("file_list.txt.tmp_new"):
-            os.remove("file_list.txt.tmp_new")
+        cleanup(file_name)
     print()
 
     # yetkileri düzelt
     for file_name in file_list:
         fix_perms(file_name)
 
+    print("\n\n" + "-"*20 + "\n")
+    print("[+] | Güncelleme tamamlandı. Görüşürüz.")
+
+
+def check_updates():
+    """güncelleme olup olmadığını kontrol eder."""
+    global download_config_too
+    print("[+] | Güncelleme kontrolü yapıyorum...")
+    try:
+        with open("version", "r") as f:
+            ver = f.read()
+    except FileNotFoundError:
+        print("\n[!] | Versiyon dosyanız yok, muhtemelen bu ilk kurulumunuz. Hoşgeldiniz.")
+        print("    | Güncelleme başlatıyorum.")
+        download_config_too = True
+        return True
+    else:
+        print("[+] | Versiyon dosyanız var.")
+
+    try:
+        from config import github_repo, github_branch
+    except ModuleNotFoundError:
+        print("\n[!] | Config dosyanız yok. onu bi indirelim.")
+        print("    | Güncelleme başlatıyorum.")
+        download_config_too = True
+        return True
+    else:
+        print("[+] | Config dosyanız var.")
+
+    download_file("version", github_repo, github_branch)
+    with open("version.tmp_new", "r") as f:
+        latest_ver = f.read()
+    if latest_ver > ver:
+        print("[!] | Sunucuda daha yeni bir sürüm var.")
+        print("    | GÜncelleme başlatıyorum.")
+        return True
+    return False
+
 
 if "__main__" == __name__:
-    print("Hoşgeldiniz. Güncelleme aracını başlatıyorum...")
-    main()
+    print("Güncelleme kontrolcüsüne hoşgeldiniz.")
+    download_config_too = False
+    while True:
+        print(f"""
+[1] Programı güncelle (güncelleme var ise yapar ve gerekenleri indirir, yoksa yapmaz)
+[2] Zorla güncelle (güncelleme olsa da olmasa da güncelleme yapar)
+[3] Sürümü kontrol et (yeni sürüm var mı?)
+
+[8] Çalışıyor gibi yap, gerçekten birşey yapma ({dry})
+[9] Config dosyamı da sıfırla ({download_config_too})
+
+""")
+        choice = input("Seçiminiz: ")
+
+        if choice == "1":
+            if check_updates():
+                main()
+            else:
+                print("\n[+] | Zaten en son sürümü kullanıyorsunuz. Güncelleme yapmıyorum.")
+            break
+        elif choice == "2":
+            main()
+            break
+        elif choice == "3":
+            if check_updates():
+                print("\n[!] | Yeni sürüm mevcut.")
+            else:
+                print("\n[+] | Zaten en son sürümü kullanıyorsunuz.")
+            break
+        elif choice == "8":
+            download_config_too = not download_config_too
+        elif choice == "9":
+            dry = not dry
+        else:
+            print("Yanlış seçim yaptınız. Lütfen istediğiniz rakamı girip ENTER tuşuna basın.")
