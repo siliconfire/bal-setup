@@ -3,7 +3,7 @@ import time
 
 import config
 
-def run(command: str, sudo: bool):
+def run(command: str, sudo: bool = True):
     if sudo:
         command = "sudo -S " + command
     if config.dry:

@@ -24,14 +24,20 @@ ssh_service = "ssh"
 ssh_config_path = "/etc/ssh/sshd_config"
 
 # SSH açık anahtarınız ne? ("ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDNIljS9EpC44CkGvbcLd/iKIHmwOsgZFMAT2bVYBtzk bartin-lisesi")
-# ssh anahtarı oluşturmak için bir linux terminalinde "ssh-keygen" yazıp,
-# sonra bu anahtarı bulmak için ~/.ssh klasörüne gidip id_<anahtar-adı>.pub dosyasını açabilirsiniz. (.pub ile biten dosya olduğundan emin olun, diğeri gizli anahtar)
 # Buradaki varsayılan anahtarın gizli anahtarını almak için beni okulda bulun (Çınar Mert Çeçen), yada cinar@cinarcecen.dev
 ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDNIljS9EpC44CkGvbcLd/iKIHmwOsgZFMAT2bVYBtzk bartin-lisesi"
 
 # GRUB config dosyası nerede? ("/etc/default/grub")
 # Bunu gerekmedikçe değiştirmeyin.
 grub_config_path = "/etc/default/grub"
+
+# Github repo ismi ("siliconfire/bal-setup")
+# Güncelleme için kullanılır. Bunu gerekmedikçe değiştirmeyin.
+github_repo = "siliconfire/bal-setup"
+
+# Branch adı ne? ("master")
+# Güncelleme için kullanılır.
+github_branch = "master"
 
 # -------------------------
 

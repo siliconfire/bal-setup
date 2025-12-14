@@ -1,3 +1,10 @@
+"""
+Ana kurulum scripti
+
+-- Çınar Mert Çeçen <cinar@cinarcecen.dev>
+-- Co-authored-by: Ali Efe Aktuğ <efealiaktug@gmail.com>
+"""
+
 import subprocess
 import time
 import os
