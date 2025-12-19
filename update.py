@@ -89,7 +89,7 @@ def fetch_file_list(github_repo: str, github_branch: str):
         with open("file_list.txt.tmp_new", "r") as f:
             file_list = f.read().splitlines()
     print("\n[+] | Güncellenecek dosyalar:")
-    print(f"    | {file_list}\n")
+    print(f"    | {file_list}\n")               # noqa, o nasıl olacak be abi
     return file_list
 
 def cleanup(file_name):
