@@ -46,16 +46,15 @@ def main():
         seperate()
 
     action("ssh servisi başlatılıyor...", f"systemctl enable --now {config.ssh_service}")
-    action("ssh için passwordauth kapatılıyor...", rf"""sed -i.bak -E 's/^[[:space:]]*#?\s*PasswordAuthentication\s*.*$/PasswordAuthentication no/g' {config.ssh_config_path}""")
-    action("ssh için pubkeyauth açılıyor...", rf"""sed -i.bak -E 's/^[[:space:]]*#?\s*PubkeyAuthentication\s*.*$/PubkeyAuthentication yes/g' {config.ssh_config_path}""")
+
+    action("ssh custom config oluşturuluyor...", f"echo '{config.ssh_config_content}' | sudo tee /etc/ssh/sshd_config.d/99-custom.conf > /dev/null")
     action("ssh için gereken dosyalar oluşturuluyor...", "mkdir -p ~/.ssh && chmod 700 ~/.ssh && touch ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys", False)
     output("ssh için public key taşınıyor...")
     write_ssh_key()
     action("ssh servisi yeniden başlatılıyor...", f"systemctl restart {config.ssh_service}")
     seperate()
 
-    action("grub-timeout 0 yapılıyor...", rf"""sed -i.bak -E 's/^[[:space:]]*#?\s*GRUB_TIMEOUT=.*$/GRUB_TIMEOUT=0/g' {config.grub_config_path}""")
-    action("grub teması gizleniyor...", f"""grep -qxF 'GRUB_TIMEOUT_STYLE=hidden' {config.grub_config_path} || echo 'GRUB_TIMEOUT_STYLE=hidden' | sudo tee -a {config.grub_config_path} > /dev/null""")
+    action("grub ayarları (timeout ve tema) güncelleniyor...", f"echo '{config.grub_config_contents}' | sudo tee /etc/default/grub.d/99-custom.cfg > /dev/null")
     action("grub güncelleniyor...", "update-grub")
     seperate()
 
