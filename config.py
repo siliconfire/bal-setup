@@ -20,7 +20,10 @@ ssh_service: str = "ssh"
 
 # SSH drop-in config dosyasına ne yazılmalı?
 ssh_config_content: str = """
+PermitRootLogin prohibit-password
 PasswordAuthentication no
+ChallengeResponseAuthentication no
+UsePAM no
 PubkeyAuthentication yes
 """
 
