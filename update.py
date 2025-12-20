@@ -120,6 +120,8 @@ def main():
 
     print("\n[+] | Güncellenecek dosya adları çekiliyor...")
     file_list = fetch_file_list(github_repo, github_branch)
+    if download_config:
+        file_list.append("config.py")
     # indir
     for file_name in file_list:
         download_file(file_name, github_repo, github_branch)
