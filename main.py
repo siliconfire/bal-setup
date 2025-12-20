@@ -14,6 +14,12 @@ from utils import output, action, seperate, write_ssh_key
 
 
 def main():
+    print("""
+[»] | Çınar Mert Çeçen <cinar@cinarcecen.dev>
+    | Ali Efe Aktuğ <efealiaktug@gmail.com>
+    | github: siliconfire/bal-setup
+""")
+
     if os.environ.get('WAS_UPDATED') == '1':
         print("\n\n\nGüncelleme başarılı. başlıyorum...")
         del os.environ['WAS_UPDATED']
@@ -60,20 +66,35 @@ def main():
     action("grub güncelleniyor...", "update-grub")
     seperate()
 
-    action("Dconf profil dosyası oluşturuluyor...", f"mkdir -p /etc/dconf/profile && echo '{config.profile_content}' | sudo tee /etc/dconf/profile/user > /dev/null", shell=True)
-    action("Dconf yerel veritabanı dizini oluşturuluyor...", "mkdir -p /etc/dconf/db/local.d/", shell=True)
-    action("Dconf config dosyası yazılıyor...", f'echo "{config.dconf_config_content}" | sudo tee /etc/dconf/db/local.d/00-power > /dev/null', shell=True)
-    action("Dconf veritabanı güncelleniyor...", "dconf update")
+    action("dconf profil dosyası oluşturuluyor...", f"mkdir -p /etc/dconf/profile && echo '{config.profile_content}' | sudo tee /etc/dconf/profile/user > /dev/null", shell=True)
+    action("dconf yerel veritabanı dizini oluşturuluyor...", "mkdir -p /etc/dconf/db/local.d/", shell=True)
+    action("dconf config dosyası yazılıyor...", f'echo "{config.dconf_config_content}" | sudo tee /etc/dconf/db/local.d/00-power > /dev/null', shell=True)
+    action("dconf veritabanı güncelleniyor...", "dconf update")
     seperate()
 
-    action("Global MIME override dosyası oluşturuluyor...",
+    # Yalan söylemeyeyim, MIME override yapmak çalışmıyor bence, fakat yine de bırakayım, ne bileyim, belki random olarak çalışmaya başlar...?
+    action("global MIME override dosyası oluşturuluyor...",
            f"echo '{config.mime_overrides}' | sudo tee /usr/share/applications/mimeapps.list > /dev/null", shell=True)
-    action("MIME veritabanı güncelleniyor...", "sudo update-desktop-database", shell=True)
+    action("MIME veritabanı güncelleniyor...", "update-desktop-database", shell=True)
     seperate()
 
     output("Ali'nin otomatik kapatma servisinin kurulumu başlatılıyor...")
     otokapat.setup()
+    seperate()
 
+    print("""
+    
+[+] | işim bitti gibi görünüyor. bir sonraki adınlar:
+    | 1. Ayarlar » Tercih edilen uygulamalar » Video = VLC, PDF = Okular
+    | 2. Openboard'ı görev çubuğuna ve masaüstüne sabitle
+    | 3. biraz sıvı iç. ben su tercih ediyorum.
+    
+[»] | Çınar Mert Çeçen <cinar@cinarcecen.dev>
+    | Ali Efe Aktuğ <efealiaktug@gmail.com>
+    | github: siliconfire/bal-setup
+    
+""")
+    output("kolay gelsin. kapatıyorum burada, görüşürüz.")
 
 if "__main__" == __name__:
     main()
