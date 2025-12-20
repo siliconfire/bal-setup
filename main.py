@@ -15,7 +15,7 @@ from utils import output, action, seperate, write_ssh_key
 
 def main():
     if os.environ.get('WAS_UPDATED') == '1':
-        print("\n\n\nGüncelleme başarılı. başlıyorum123123...")
+        print("\n\n\nGüncelleme başarılı. başlıyorum...")
         del os.environ['WAS_UPDATED']
     else:
         print(f"Kurulum scriptine hoş geldiniz!")
@@ -34,7 +34,7 @@ def main():
     action("apt autoremove...", "apt autoremove -y")
     seperate()
 
-    action("apt üzerinden program kuruluyor...", "apt install helix vim openssh-server flatpak gnome-software-plugin-flatpak dconf-cli openboard -y")
+    action("apt üzerinden program kuruluyor...", "apt install helix vim openssh-server flatpak gnome-software-plugin-flatpak dconf-cli okular openboard -y")
     seperate()
 
     action("flatpak depoları ekleniyor...", "flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo", False)
@@ -61,6 +61,11 @@ def main():
     action("Dconf yerel veritabanı dizini oluşturuluyor...", "mkdir -p /etc/dconf/db/local.d/", shell=True)
     action("Dconf config dosyası yazılıyor...", f'echo "{config.dconf_config_content}" | sudo tee /etc/dconf/db/local.d/00-power > /dev/null', shell=True)
     action("Dconf veritabanı güncelleniyor...", "dconf update")
+    seperate()
+
+    action("Global MIME override dosyası oluşturuluyor...",
+           f"echo '{config.mime_overrides}' | sudo tee /usr/share/applications/mimeapps.list > /dev/null", shell=True)
+    action("MIME veritabanı güncelleniyor...", "sudo update-desktop-database", shell=True)
     seperate()
 
     output("Ali'nin otomatik kapatma servisinin kurulumu başlatılıyor...")

@@ -97,6 +97,7 @@ WantedBy=timers.target
 
     # notify-send ui gerektrirebilir, ne olur bilmiyorum
     # sudosuz calistiralim ki, bende bilmiyorum aslında nedenini, gerek yok ama.
+    # relax olacan biraz bu hayatta.
     run("notify-send \"Kurulum Tamamlandı\" \"Otomatik kapatma servisi başarıyla kuruldu ve başlatıldı.\"", sudo=False)
 
     # Cleanup temporary files

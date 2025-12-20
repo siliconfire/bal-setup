@@ -47,6 +47,18 @@ profile_content: str = """user-db:user
 system-db:local
 """
 
+# Global MIME override dosyasına ne yazılmalı?
+mime_overrides = """[Default Applications]
+application/pdf=org.kde.okular.desktop;
+video/x-matroska=vlc.desktop;
+video/mp4=vlc.desktop;
+video/mpeg=vlc.desktop;
+video/x-msvideo=vlc.desktop;
+video/quicktime=vlc.desktop;
+video/x-flv=vlc.desktop;
+video/webm=vlc.desktop;
+"""
+
 # Github repo ismi ne olmalı? ("siliconfire/bal-setup")
 # Güncelleme için kullanılır. Bunu gerekmedikçe değiştirmeyin.
 github_repo: str = "siliconfire/bal-setup"
