@@ -10,6 +10,7 @@ def pull_variables():
     """Neden böyle saçma bir fonksiyon yazdığımı düşünüyor olabilirsiniz, açıklayayım.
     Eğer config varsa değerleri ordan çekmek istiyorum (ki kullanıcı değiştirebilsin), ama eğer config yoksa kullanıcıları "değersiz" bırakmak istemiyorum.
     Kullanıcının bu repoyu tamamen bu update.py dosyası ile çekeceğini değerlendirince çok da saçma gelmiyor."""
+    global download_config
     try:
         from config import github_repo, github_branch
         print(f"\n[+] | Config dosyanızdan adresi çektim...")
@@ -20,7 +21,7 @@ def pull_variables():
         print(
             "\n[!] | Config dosyanız yok herhalde, bu ilk kurulum ise bu tamamen normal. Varsayılan değerleri kullanıyorum...")
         print(f"    | {github_repo} ({github_branch})")
-        download_config_too = True
+        download_config = True
     return github_repo, github_branch
 
 
@@ -114,6 +115,7 @@ def fix_perms(file_name: str):
 
 
 def main():
+    global download_config
     github_repo, github_branch = pull_variables()
 
     print("\n[+] | Güncellenecek dosya adları çekiliyor...")
@@ -147,7 +149,7 @@ def main():
 
 def check_updates():
     """güncelleme olup olmadığını kontrol eder."""
-    global download_config_too
+    global download_config
     print("[+] | Güncelleme kontrolü yapıyorum...")
     try:
         with open("version", "r") as f:
@@ -155,7 +157,7 @@ def check_updates():
     except FileNotFoundError:
         print("\n[!] | Versiyon dosyanız yok, muhtemelen bu ilk kurulumunuz. Hoşgeldiniz.")
         print("    | Güncelleme başlatıyorum.")
-        download_config_too = True
+        download_config = True
         return True
     else:
         print("[+] | Versiyon dosyanız var.")
@@ -165,7 +167,7 @@ def check_updates():
     except ModuleNotFoundError:
         print("\n[!] | Config dosyanız yok. onu bi indirelim.")
         print("    | Güncelleme başlatıyorum.")
-        download_config_too = True
+        download_config = True
         return True
     else:
         print("[+] | Config dosyanız var.")
@@ -181,9 +183,10 @@ def check_updates():
         return True
     return False
 
+
 if "__main__" == __name__:
     print("Güncelleme kontrolcüsüne hoşgeldiniz.")
-    download_config_too = False
+    download_config = False
     while True:
         print(f"""
 [1] Programı güncelle (güncelleme var ise yapar ve gerekenleri indirir, yoksa yapmaz)
@@ -191,7 +194,7 @@ if "__main__" == __name__:
 [3] Sürümü kontrol et (yeni sürüm var mı?)
 
 [8] Çalışıyor gibi yap, gerçekten birşey yapma ({dry})
-[9] Config dosyamı da sıfırla ({download_config_too})
+[9] Config dosyamı da sıfırla ({download_config})
 
 """)
         choice = input("Seçiminiz: ")
@@ -214,6 +217,6 @@ if "__main__" == __name__:
         elif choice == "8":
             dry = not dry
         elif choice == "9":
-            download_config_too = not download_config_too
+            download_config = not download_config
         else:
             print("\n" + "-"*20 + "\nYanlış seçim yaptınız. Lütfen istediğiniz rakamı girip ENTER tuşuna basın.")

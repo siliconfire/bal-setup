@@ -65,4 +65,3 @@ if "__main__" == __name__:
     main()
 else:
     print("beni lütfen modül olarak kullanmayın.")
-
