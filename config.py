@@ -5,7 +5,7 @@
 
 # Dry run/test sürüşü açılsın mı? (False)
 # True iken komutlar gerçekten çalıştırılmaz.
-dry: bool = True
+dry: bool = False
 
 # Cockpit kurulumu yapılsın mı? (True)
 cockpit: bool = True
