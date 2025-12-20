@@ -3,7 +3,7 @@ import os
 import subprocess
 import sys
 
-dry = False  # fake atması (dry run) için True yapın.
+dry = True  # fake atması (dry run) için True yapın.
 
 
 def pull_variables():
@@ -82,6 +82,8 @@ def replace_file(old, new):
 
 
 def fetch_file_list(github_repo: str, github_branch: str):
+    global download_config
+    file_list = []
     """dosya listesini çeker."""
     download_file("file_list.txt", github_repo, github_branch)
     if dry:
@@ -89,8 +91,11 @@ def fetch_file_list(github_repo: str, github_branch: str):
     else:
         with open("file_list.txt.tmp_new", "r") as f:
             file_list = f.read().splitlines()
+    if download_config:
+        if "config.py" not in file_list:
+            file_list.append("config.py")
     print("\n[+] | Güncellenecek dosyalar:")
-    print(f"    | {file_list}\n")               # noqa, o nasıl olacak be abi
+    print(f"    | {file_list}\n")
     return file_list
 
 def cleanup(file_name):
@@ -115,13 +120,10 @@ def fix_perms(file_name: str):
 
 
 def main():
-    global download_config
     github_repo, github_branch = pull_variables()
 
     print("\n[+] | Güncellenecek dosya adları çekiliyor...")
     file_list = fetch_file_list(github_repo, github_branch)
-    if download_config:
-        file_list.append("config.py")
     # indir
     for file_name in file_list:
         download_file(file_name, github_repo, github_branch)
