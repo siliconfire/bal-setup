@@ -1,6 +1,7 @@
 import subprocess
 import time
 import os
+from pathlib import Path
 
 import config
 
@@ -37,11 +38,25 @@ def action2(message: str, command: str, sudo: bool = True):
 def seperate():
     print("\n" + "-"*20 + "\n")
 
+def write_ssh_key(use_root: bool = False):
+    if use_root:
+        ssh_dir = Path("/root/.ssh")
+    else:
+        # eğer sudo isek Path.home() root da olabilir o yüzden kendimiz bulalım
+        # valla olmayadabilir bilmiyorum aslında, riski almak isteyen varsa PR atabilir vaktim yok
+        user = os.environ.get("SUDO_USER") or os.getlogin()
+        ssh_dir = Path(f"/home/{user}/.ssh")
 
-def write_ssh_key():
-    path = os.path.expanduser("~/.ssh/authorized_keys")
-    with open(path, 'a') as f:
-        f.write(config.ssh_public_key + '\n')
+    ssh_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
+
+    file_path = ssh_dir / "authorized_keys"
+
+    with file_path.open("a") as f:
+        f.write(f"\n{config.ssh_public_key}\n")
+
+    # yetkilerden emin olalım, ben bile ssh kadar seçici değilim abi (kola içmiyorum)
+    os.chmod(file_path, 0o600)
+    os.chmod(ssh_dir, 0o700)
 
 
 if __name__ == "__main__":
