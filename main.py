@@ -34,7 +34,7 @@ def main():
     action("apt autoremove...", "apt autoremove -y")
     seperate()
 
-    action("apt üzerinden program kuruluyor...", "apt install helix vim openssh-server flatpak gnome-software-plugin-flatpak openboard -y")
+    action("apt üzerinden program kuruluyor...", "apt install helix vim openssh-server flatpak gnome-software-plugin-flatpak dconf-cli openboard -y")
     seperate()
 
     action("flatpak depoları ekleniyor...", "flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo", False)
@@ -55,6 +55,12 @@ def main():
 
     action("grub ayarları (timeout ve tema) güncelleniyor...", f"echo '{config.grub_config_contents}' | sudo tee /etc/default/grub.d/99-custom.cfg > /dev/null", shell=True)
     action("grub güncelleniyor...", "update-grub")
+    seperate()
+
+    action("Dconf profil dosyası oluşturuluyor...", f"mkdir -p /etc/dconf/profile && echo '{config.profile_content}' | sudo tee /etc/dconf/profile/user > /dev/null", shell=True)
+    action("Dconf yerel veritabanı dizini oluşturuluyor...", "mkdir -p /etc/dconf/db/local.d/", shell=True)
+    action("Dconf config dosyası yazılıyor...", f"echo '{config.dconf_config_content}' | sudo tee /etc/dconf/db/local.d/00-power > /dev/null", shell=True)
+    action("Dconf veritabanı güncelleniyor...", "dconf update")
     seperate()
 
     output("Ali'nin otomatik kapatma servisinin kurulumu başlatılıyor...")

@@ -18,7 +18,7 @@ compact: bool = True
 # SSH servisi ile ilgili bir hata alırsanız bunu "ssh" yada "sshd" arasında değiştirmeyi deneyin.
 ssh_service: str = "ssh"
 
-# SSH drop-in config içeriği ne olmalı?
+# SSH drop-in config dosyasına ne yazılmalı?
 ssh_config_content: str = """
 PasswordAuthentication no
 PubkeyAuthentication yes
@@ -30,13 +30,24 @@ ssh_public_key: str = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDNIljS9EpC44CkGvbcLd
 # GRUB config dosyası nerede? ("/etc/default/grub")
 grub_config_contents: str = "/etc/default/grub"
 
-# GRUB drop-in config içeriği ne olmalı? (evet, biliyorum, ona tam olarak drop-in denmiyor, ama öyle gibi çalışıyor ve gerçekten de umrumda değil.)
-grub_custom_conf = """GRUB_TIMEOUT=0
+# GRUB drop-in config içine ne yazılmalı? (evet, biliyorum, ona tam olarak drop-in denmiyor, ama öyle gibi çalışıyor ve gerçekten de umrumda değil.)
+grub_custom_conf: str = """GRUB_TIMEOUT=0
 GRUB_TIMEOUT_STYLE=hidden
 GRUB_TERMINAL=console
 """
 
-# Github repo ismi ("siliconfire/bal-setup")
+# Dconf drop-in config dosyasına ne yazılmalı?
+dconf_config_content: str = """[org/cinnamon/settings-daemon/plugins/power]
+sleep-display-ac=10800
+button-power='shutdown'
+"""
+
+# Dconf profil dosyasına ne yazılmalı?
+profile_content: str = """user-db:user
+system-db:local
+"""
+
+# Github repo ismi ne olmalı? ("siliconfire/bal-setup")
 # Güncelleme için kullanılır. Bunu gerekmedikçe değiştirmeyin.
 github_repo: str = "siliconfire/bal-setup"
 
