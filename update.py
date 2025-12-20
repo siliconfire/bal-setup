@@ -3,7 +3,7 @@ import os
 import subprocess
 import sys
 
-dry = True  # fake atması (dry run) için True yapın.
+dry = False  # fake atması (dry run) için True yapın.
 
 
 def pull_variables():
