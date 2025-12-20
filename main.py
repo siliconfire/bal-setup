@@ -24,7 +24,7 @@ def main():
         print("\n\n\nGüncelleme başarılı. başlıyorum...")
         del os.environ['WAS_UPDATED']
     else:
-        print(f"Kurulum scriptine hoş geldiniz!")
+        output(f"Kurulum scriptine hoş geldiniz!")
 
         if update.check_updates():
             output("Güncelleme varmış. Güncellemeyi yapalım...")
@@ -84,7 +84,7 @@ def main():
 
     print("""
     
-[+] | işim bitti gibi görünüyor. bir sonraki adınlar:
+[+] | işim bitti gibi görünüyor. bir sonraki adımlar:
     | 1. Ayarlar » Tercih edilen uygulamalar » Video = VLC, PDF = Okular
     | 2. Openboard'ı görev çubuğuna ve masaüstüne sabitle
     | 3. biraz sıvı iç. ben su tercih ediyorum.
