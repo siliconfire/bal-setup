@@ -44,6 +44,9 @@ def main():
         action("cockpit kuruluyor...", "apt install cockpit -y")
         action("cockpit servisi başlatılıyor...", "systemctl enable --now cockpit.socket")
         seperate()
+    else:
+        print("""[!] | cockpit kurulumu atlandı.
+    | bunu değiştirmek için config.py dosyasına müracaat edebilirsiniz.""")
 
     action("ssh servisi başlatılıyor...", f"systemctl enable --now {config.ssh_service}")
     action("ssh custom config oluşturuluyor...", f"echo '{config.ssh_config_content}' | sudo tee /etc/ssh/sshd_config.d/99-custom.conf > /dev/null", shell=True)
