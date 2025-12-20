@@ -59,7 +59,7 @@ def main():
 
     action("Dconf profil dosyası oluşturuluyor...", f"mkdir -p /etc/dconf/profile && echo '{config.profile_content}' | sudo tee /etc/dconf/profile/user > /dev/null", shell=True)
     action("Dconf yerel veritabanı dizini oluşturuluyor...", "mkdir -p /etc/dconf/db/local.d/", shell=True)
-    action("Dconf config dosyası yazılıyor...", f"echo '{config.dconf_config_content}' | sudo tee /etc/dconf/db/local.d/00-power > /dev/null", shell=True)
+    action("Dconf config dosyası yazılıyor...", f'echo "{config.dconf_config_content}" | sudo tee /etc/dconf/db/local.d/00-power > /dev/null', shell=True)
     action("Dconf veritabanı güncelleniyor...", "dconf update")
     seperate()
 
