@@ -5,15 +5,18 @@ from pathlib import Path
 
 import config
 
-def run(command: str, sudo: bool = True):
+def run(command: str, sudo: bool = True, shell: bool = False):
     if sudo:
         command = "sudo -S " + command
     if config.dry:
         time.sleep(0.2)
         # print(f"[DRY RUN] {command}")
         return
-    command = command.split()
-    subprocess.run(command)
+    if shell:
+        subprocess.run(command, shell=True)
+    else:
+        command = command.split()
+        subprocess.run(command)
 
 
 def output(message: str):
@@ -23,13 +26,13 @@ def output2(message: str):
     print(f"| {message}")
 
 
-def action(message: str, command: str, sudo: bool = True):
+def action(message: str, command: str, sudo: bool = True, shell: bool = False):
     if not config.compact:
         print()
     output(message)
-    run(command, sudo)
+    run(command, sudo, shell)
 
-def action2(message: str, command: str, sudo: bool = True):
+def action2(message: str, command: str, sudo: bool = True, shell: bool = False):
     if not config.compact:
         print()
     output2(message)
