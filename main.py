@@ -46,14 +46,14 @@ def main():
         seperate()
 
     action("ssh servisi başlatılıyor...", f"systemctl enable --now {config.ssh_service}")
-    action("ssh custom config oluşturuluyor...", f"echo '{config.ssh_config_content}' | sudo tee /etc/ssh/sshd_config.d/99-custom.conf > /dev/null")
+    action("ssh custom config oluşturuluyor...", f"echo '{config.ssh_config_content}' | sudo tee /etc/ssh/sshd_config.d/99-custom.conf > /dev/null", shell=True)
     action("ssh için gereken dosyalar oluşturuluyor...", "mkdir -p ~/.ssh && chmod 700 ~/.ssh && touch ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys", sudo=False, shell=True)
     output("ssh için public key taşınıyor...")
     write_ssh_key()
     action("ssh servisi yeniden başlatılıyor...", f"systemctl restart {config.ssh_service}")
     seperate()
 
-    action("grub ayarları (timeout ve tema) güncelleniyor...", f"echo '{config.grub_config_contents}' | sudo tee /etc/default/grub.d/99-custom.cfg > /dev/null")
+    action("grub ayarları (timeout ve tema) güncelleniyor...", f"echo '{config.grub_config_contents}' | sudo tee /etc/default/grub.d/99-custom.cfg > /dev/null", shell=True)
     action("grub güncelleniyor...", "update-grub")
     seperate()
 
