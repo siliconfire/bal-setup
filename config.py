@@ -7,8 +7,8 @@
 # True iken komutlar gerçekten çalıştırılmaz.
 dry: bool = False
 
-# Cockpit kurulumu yapılsın mı? (True)
-cockpit: bool = True
+# Cockpit kurulumu yapılsın mı? (False)
+cockpit: bool = False
 
 # Çıktı sıkışık mı olsun? (True)
 # True iken aralarda boşluk bırakılır.
