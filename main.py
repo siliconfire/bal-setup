@@ -50,8 +50,7 @@ def main():
         action("cockpit kuruluyor...", "apt install cockpit -y")
         action("cockpit servisi başlatılıyor...", "systemctl enable --now cockpit.socket")
     else:
-        print("""[!] | cockpit kurulumu atlandı.
-    | bunu değiştirmek için config.py dosyasına müracaat edebilirsiniz.""")
+        print("[!] | cockpit kurulumu atlandı.\n    | bunu değiştirmek için config.py dosyasına müracaat edebilirsiniz.")
     seperate()
 
     action("ssh servisi başlatılıyor...", f"systemctl enable --now {config.ssh_service}")
@@ -71,6 +70,9 @@ def main():
     action("dconf config dosyası yazılıyor...", f'echo "{config.dconf_config_content}" | sudo tee /etc/dconf/db/local.d/00-power > /dev/null', shell=True)
     action("dconf veritabanı güncelleniyor...", "dconf update")
     seperate()
+
+    action("Sudo config dosyası atılıyor...", f"echo '{config.sudo_config_content}' | sudo tee /etc/sudoers.d/99-options > /dev/null", shell=True)
+    action("Sudo config dosyasının yetkileri düzenleniyor...", "sudo chmod 0440 /etc/sudoers.d/99-options", shell=True)
 
     # Yalan söylemeyeyim, MIME override yapmak çalışmıyor bence, fakat yine de bırakayım, ne bileyim, belki random olarak çalışmaya başlar...?
     action("global MIME override dosyası oluşturuluyor...",

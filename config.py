@@ -62,6 +62,9 @@ video/x-flv=vlc.desktop;
 video/webm=vlc.desktop;
 """
 
+# Sudo drop-in config dosyasına ne yazılmalı?
+sudo_config_content: str = "Defaults pwfeedback,insults"
+
 # Github repo ismi ne olmalı? ("siliconfire/bal-setup")
 # Güncelleme için kullanılır. Bunu gerekmedikçe değiştirmeyin.
 github_repo: str = "siliconfire/bal-setup"
