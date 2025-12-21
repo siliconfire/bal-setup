@@ -73,6 +73,7 @@ def main():
 
     action("Sudo config dosyası atılıyor...", f"echo '{config.sudo_config_content}' | sudo tee /etc/sudoers.d/99-options > /dev/null", shell=True)
     action("Sudo config dosyasının yetkileri düzenleniyor...", "sudo chmod 0440 /etc/sudoers.d/99-options", shell=True)
+    seperate()
 
     # Yalan söylemeyeyim, MIME override yapmak çalışmıyor bence, fakat yine de bırakayım, ne bileyim, belki random olarak çalışmaya başlar...?
     action("global MIME override dosyası oluşturuluyor...",
