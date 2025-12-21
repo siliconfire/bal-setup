@@ -30,11 +30,8 @@ PubkeyAuthentication yes
 # SSH açık anahtarınız ne? ("ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDNIljS9EpC44CkGvbcLd/iKIHmwOsgZFMAT2bVYBtzk bartin-lisesi")
 ssh_public_key: str = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDNIljS9EpC44CkGvbcLd/iKIHmwOsgZFMAT2bVYBtzk bartin-lisesi"
 
-# GRUB config dosyası nerede? ("/etc/default/grub")
-grub_config_contents: str = "/etc/default/grub"
-
 # GRUB drop-in config içine ne yazılmalı? (evet, biliyorum, ona tam olarak drop-in denmiyor, ama öyle gibi çalışıyor ve gerçekten de umrumda değil.)
-grub_custom_conf: str = """GRUB_TIMEOUT=0
+grub_config_content: str = """GRUB_TIMEOUT=0
 GRUB_TIMEOUT_STYLE=hidden
 GRUB_TERMINAL=console
 """

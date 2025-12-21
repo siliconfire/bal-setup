@@ -61,7 +61,7 @@ def main():
     action("ssh servisi yeniden başlatılıyor...", f"systemctl restart {config.ssh_service}")
     seperate()
 
-    action("grub ayarları (timeout ve tema) güncelleniyor...", f"echo '{config.grub_config_contents}' | sudo tee /etc/default/grub.d/99-custom.cfg > /dev/null", shell=True)
+    action("grub ayarları (timeout ve tema) güncelleniyor...", f"echo '{config.grub_config_content}' | sudo tee /etc/default/grub.d/99-custom.cfg > /dev/null", shell=True)
     action("grub güncelleniyor...", "update-grub")
     seperate()
 
