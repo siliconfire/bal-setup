@@ -79,12 +79,6 @@ def main():
     action("Sudo config dosyasının yetkileri düzenleniyor...", "sudo chmod 0440 /etc/sudoers.d/99-options", shell=True)
     seperate()
 
-    # Yalan söylemeyeyim, MIME override yapmak çalışmıyor bence, fakat yine de bırakayım, ne bileyim, belki random olarak çalışmaya başlar...?
-    action("global MIME override dosyası oluşturuluyor...",
-           f"echo '{config.mime_overrides}' | sudo tee /usr/share/applications/mimeapps.list > /dev/null", shell=True)
-    action("MIME veritabanı güncelleniyor...", "update-desktop-database", shell=True)
-    seperate()
-
     output("Ali'nin otomatik kapatma servisinin kurulumu başlatılıyor...")
     otokapat.setup()
     seperate()
