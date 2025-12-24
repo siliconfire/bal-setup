@@ -120,6 +120,9 @@ def fix_perms(file_name: str):
 
 
 def main():
+    if "download_config" not in globals():
+        global download_config
+        download_config = False
     github_repo, github_branch = pull_variables()
 
     print("\n[+] | Güncellenecek dosya adları çekiliyor...")
