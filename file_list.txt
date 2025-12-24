@@ -3,3 +3,4 @@ otokapat.py
 update.py
 utils.py
 version
+.gitignore
