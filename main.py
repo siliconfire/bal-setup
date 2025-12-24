@@ -44,7 +44,7 @@ def main():
     action("apt üzerinden program kuruluyor...", "apt install helix vim openssh-server flatpak gnome-software-plugin-flatpak dconf-cli okular openboard xournalpp geogebra -y")
     seperate()
 
-    action("flatpak depoları ekleniyor...", "flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo", False)
+    action("flatpak depoları ekleniyor...", "flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo", sudo=False)
     seperate()
 
     # fikir:
