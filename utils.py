@@ -5,6 +5,7 @@ from pathlib import Path
 
 import config
 
+
 def run(command: str, sudo: bool = True, shell: bool = False):
     if sudo:
         command = "sudo -S " + command
@@ -22,6 +23,7 @@ def run(command: str, sudo: bool = True, shell: bool = False):
 def output(message: str):
     print(f"[!] {message}")
 
+
 def output2(message: str):
     print(f"| {message}")
 
@@ -32,14 +34,17 @@ def action(message: str, command: str, sudo: bool = True, shell: bool = False):
     output(message)
     run(command, sudo, shell)
 
+
 def action2(message: str, command: str, sudo: bool = True, shell: bool = False):
     if not config.compact:
         print()
     output2(message)
     run(command, sudo)
 
+
 def seperate():
     print("\n" + "-"*20 + "\n")
+
 
 def write_ssh_key(use_root: bool = False):
     if use_root:

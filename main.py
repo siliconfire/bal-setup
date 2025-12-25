@@ -42,6 +42,7 @@ def main():
 
     # fikir: kalgebra kgeography kalzium kstars
     action("apt üzerinden program kuruluyor...", "apt install helix vim openssh-server flatpak gnome-software-plugin-flatpak dconf-cli softmaker-freeoffice-2024 okular openboard xournalpp geogebra -y")
+    action("apt üzerinden program siliniyor...", "apt remove onlyoffice-desktopeditors -y")
     seperate()
 
     action("flatpak depoları ekleniyor...", "flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo", sudo=False)
@@ -79,7 +80,7 @@ def main():
     action("Sudo config dosyasının yetkileri düzenleniyor...", "sudo chmod 0440 /etc/sudoers.d/99-options", shell=True)
     seperate()
 
-    output("Ali'nin otomatik kapatma servisinin kurulumu başlatılıyor...")
+    output("Ali'nin otomatik kapatma servisinin kurulumu başlatılıyor...\nsigmaalipro")
     otokapat.setup()
     seperate()
 
@@ -91,7 +92,7 @@ def main():
     | 3. biraz sıvı iç. ben su tercih ediyorum.
     
 [»] | Çınar Mert Çeçen <cinar@cinarcecen.dev>
-    | Ali Efe Aktuğ <efealiaktug@gmail.com>
+    | Ali Efe Aktuğ <efealiaktug@gmail.com> 
     | github: siliconfire/bal-setup
     
 """)
