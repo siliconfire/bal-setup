@@ -51,6 +51,8 @@ def main():
     # fikir:
     action("flatpak üzerinden program kuruluyor...", "flatpak install flathub com.github.flxzt.rnote se.sjoerd.Graphs -y")
 
+    action("etapadmin dışındaki diğer kullanıcılar siliniyor...", "getent passwd | awk -F: '$3>=1000 && $1!=\"etapadmin\" {print $1}' | xargs -r -I{} userdel -r {}", shell=True)
+
     if config.cockpit:
         action("cockpit kuruluyor...", "apt install cockpit -y")
         action("cockpit servisi başlatılıyor...", "systemctl enable --now cockpit.socket")
