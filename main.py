@@ -51,7 +51,7 @@ def main():
     # fikir:
     action("flatpak üzerinden program kuruluyor...", "flatpak install flathub com.github.flxzt.rnote se.sjoerd.Graphs -y")
 
-    action("etapadmin dışındaki diğer kullanıcılar siliniyor...", "getent passwd | awk -F: '$3>=1000 && $1!=\"etapadmin\" {print $1}' | xargs -r -I{} userdel -r {}", shell=True)
+    action("etapadmin dışındaki diğer kullanıcılar siliniyor...", "getent passwd | awk -F: '$1!=""root"" && $1!=""etapadmin"" && $6 ~ /^\\/home\\// {print $1}' | xargs -r -I{} userdel -r {}", shell=True)
 
     if config.cockpit:
         action("cockpit kuruluyor...", "apt install cockpit -y")
